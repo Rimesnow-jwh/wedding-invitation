@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="蒋武华 & 彭斯 婚礼邀请函">
+  <meta property="og:title" content="蒋武华 & 彭斯 婚礼邀请函">
+  <meta property="og:description" content="诚挚邀请你参加我们的婚礼">
+  <meta property="og:image" content="images/IMG_2177-poster.jpg">
+  <meta property="og:type" content="website">
+  <title>蒋武华 & 彭斯 | 婚礼邀请函</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="invitation-container" id="invitation">
+    <!-- ====== ① 封面 ====== -->
+    <section class="section hero" id="section-hero">
+      <img src="images/IMG_2177-poster.jpg" alt="" class="hero-image">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <p class="section-title" style="color:rgba(255,255,255,0.85);">THE WEDDING</p>
+        <h1 class="hero-names">
+          蒋武华<span class="ampersand">&amp;</span>彭斯
+        </h1>
+        <p class="hero-date">2026年7月18日 · 中午12:00</p>
+      </div>
+    </section>
+
+    <!-- ====== ② 邀请语 ====== -->
+    <section class="section reveal" id="section-invitation">
+      <img src="images/IMG_1984.jpg" alt="" class="vignette-photo">
+      <p class="vignette-text">
+        嘉礼初成，良缘夙缔<br>
+        情敦鹣鲽，愿相敬之如宾<br>
+        同心同德，宜室宜家<br>
+        谨以白头之约，书向鸿笺
+      </p>
+    </section>
+
+    <!-- ====== ③ 喜宴信息 ====== -->
+    <section class="section reveal" id="section-info">
+      <div class="section-header">
+        <p class="section-title">喜 宴 信 息</p>
+        <div class="section-divider"></div>
+      </div>
+      <div class="card-row">
+        <img src="images/IMG_2104-10cun.jpg" alt="" class="card-image">
+        <div class="card-info">
+          <p>📍 喜上喜（临武玉石城店）</p>
+          <p style="font-size:11px;color:var(--color-text-light);padding-left:1.2em;">喜乐年华厅</p>
+          <p>🕛 2026年7月18日</p>
+          <p style="font-size:11px;color:var(--color-text-light);padding-left:1.2em;">周六 · 中午12:00</p>
+          <p style="font-size:11px;color:var(--color-text-light);padding-left:1.2em;">农历丙午年五月廿四</p>
+        </div>
+      </div>
+      <div style="margin-top:24px;">
+        <img src="images/IMG_2191-10cun.jpg" alt="" class="banner-photo" style="margin-bottom:0;">
+      </div>
+    </section>
+
+    <!-- ====== ④ 相册展示 ====== -->
+    <section class="section reveal" id="section-gallery">
+      <div class="section-header">
+        <p class="section-title">我 们 的 故 事</p>
+        <div class="section-divider"></div>
+      </div>
+      <div class="photo-grid">
+        <img src="images/IMG_2111.jpg" alt="">
+        <img src="images/IMG_2022.jpg" alt="">
+        <img src="images/IMG_2114.jpg" alt="">
+        <img src="images/IMG_2076.jpg" alt="">
+        <img src="images/IMG_2090.jpg" alt="">
+        <img src="images/IMG_1953.jpg" alt="">
+      </div>
+    </section>
+
+    <!-- ====== ⑤ 赴宴回执 ====== -->
+    <section class="section reveal" id="section-rsvp">
+      <div class="section-header">
+        <p class="section-title">赴 宴 回 执</p>
+        <div class="section-divider"></div>
+      </div>
+      <div class="card-row">
+        <img src="images/IMG_2225.jpg" alt="" class="card-image">
+        <div class="card-info">
+          <div id="rsvp-stats" class="stats-row" style="justify-content:flex-start;gap:24px;">
+            <div class="stat-item">
+              <span class="stat-number" id="attending-count">0</span>
+              <span class="stat-label">人确认赴宴</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="guest-total">0</span>
+              <span class="stat-label">赴宴总人数</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <form id="rsvp-form" style="margin-top:24px;">
+        <div class="form-group">
+          <label class="form-label">👤 您的姓名</label>
+          <input type="text" class="form-input" id="rsvp-name" placeholder="请输入姓名" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">👥 赴宴人数</label>
+          <input type="number" class="form-input" id="rsvp-count" placeholder="请输入人数" min="0" max="20" value="1" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">📞 联系电话</label>
+          <input type="tel" class="form-input" id="rsvp-phone" placeholder="请输入电话（选填）">
+        </div>
+        <div class="form-group">
+          <label class="form-label">💬 是否参加</label>
+          <div class="form-radio-group">
+            <label class="form-radio">
+              <input type="radio" name="attending" value="true" required> 参加
+            </label>
+            <label class="form-radio">
+              <input type="radio" name="attending" value="false"> 不参加
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="btn" id="rsvp-submit">提 交 回 执</button>
+        <p id="rsvp-msg" class="text-caption" style="margin-top:8px;display:none;"></p>
+      </form>
+    </section>
+
+    <!-- ====== ⑥ 祝福留言墙 ====== -->
+    <section class="section reveal" id="section-blessings">
+      <div class="section-header">
+        <p class="section-title">祝 福 留 言</p>
+        <div class="section-divider"></div>
+      </div>
+      <img src="images/puzzle-heart.jpg" alt="" class="banner-photo">
+      <div class="stats-row">
+        <div class="stat-item">
+          <span class="stat-number" id="blessing-count">0</span>
+          <span class="stat-label">条祝福</span>
+        </div>
+      </div>
+      <form id="blessing-form" style="margin-top:16px;">
+        <div class="form-group">
+          <label class="form-label">✍️ 写下你的祝福</label>
+          <textarea class="form-input" id="blessing-text" rows="3" placeholder="写下对新人的祝福..." required></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">署名</label>
+          <input type="text" class="form-input" id="blessing-author" placeholder="你的名字" required>
+        </div>
+        <button type="submit" class="btn" id="blessing-submit">送 出 祝 福</button>
+        <p id="blessing-msg" class="text-caption" style="margin-top:8px;display:none;"></p>
+      </form>
+      <div class="blessings-list" id="blessings-list"></div>
+    </section>
+
+    <!-- ====== ⑦ 联系方式 ====== -->
+    <section class="section reveal" id="section-contact">
+      <div class="section-header">
+        <p class="section-title">联 系 新 人</p>
+        <div class="section-divider"></div>
+      </div>
+      <div class="contact-row">
+        <div class="contact-card">
+          <img src="images/IMG_2222-10cun.jpg" alt="" class="contact-avatar">
+          <p class="contact-name">🤵 新郎 · 蒋武华</p>
+          <p class="contact-phone"><a href="tel:13349676608">13349676608</a></p>
+        </div>
+        <div class="contact-card">
+          <img src="images/IMG_2182-10cun.jpg" alt="" class="contact-avatar">
+          <p class="contact-name">👰 新娘 · 彭斯</p>
+          <p class="contact-phone"><a href="tel:18374893665">18374893665</a></p>
+        </div>
+      </div>
+      <p class="text-caption" style="text-align:center;margin-top:20px;letter-spacing:2px;">💚 长按号码可复制，点击直接拨打</p>
+    </section>
+
+    <!-- ====== ⑧ 尾图 ====== -->
+    <section class="section footer" id="section-footer">
+      <img src="images/jiugongge.jpg" alt="" class="banner-photo" style="margin-bottom:32px;">
+      <p class="footer-heart">♡</p>
+      <p class="footer-text">感谢你的到来</p>
+      <p class="footer-sub">见证我们的幸福时刻</p>
+      <p class="footer-thanks">THANK YOU</p>
+      <img src="images/IMG_1930.jpg" alt="" class="vignette-photo" style="margin-top:32px;">
+      <div class="photo-grid" style="margin-top:16px;">
+        <img src="images/IMG_2119.jpg" alt="">
+        <img src="images/IMG_2098.jpg" alt="">
+      </div>
+    </section>
+
+    <!-- ====== 导出按钮 ====== -->
+    <div class="export-bar" id="export-bar">
+      <button class="export-btn" id="btn-export">📸 保存长图</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/visitors.js"></script>
+  <script src="js/rsvp.js"></script>
+  <script src="js/blessings.js"></script>
+  <script src="js/export.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+.vercel
+
+# 精修原图（不部署）
+精修/
+
+# Superpowers 工作文件
+.superpowers/
+
+# 系统文件
+*.txt
+Thumbs.db
+Desktop.ini
