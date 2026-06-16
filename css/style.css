@@ -462,7 +462,76 @@ textarea.form-input {
 }
 
 /* 导出时隐藏交互元素 */
-.export-mode .export-bar { display: none !important; }
+.export-mode .export-bar,
+.export-mode .danmaku-overlay { display: none !important; }
+
+/* ============================================== */
+/*  弹幕祝福                                      */
+/* ============================================== */
+.danmaku-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.danmaku-item {
+  position: absolute;
+  white-space: nowrap;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font: 400 13px/1.5 'Noto Serif SC', serif;
+  letter-spacing: 1px;
+  animation: danmaku-fly 8s linear forwards;
+  opacity: 0;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.danmaku-item:nth-child(5n+1) {
+  background: rgba(250,247,243,0.92);
+  color: #5C4A3A;
+  border: 1px solid #E8D5C4;
+}
+
+.danmaku-item:nth-child(5n+2) {
+  background: rgba(196,168,130,0.88);
+  color: #fff;
+}
+
+.danmaku-item:nth-child(5n+3) {
+  background: rgba(245,237,224,0.90);
+  color: #8B7A62;
+  border: 1px solid #D4C9B8;
+}
+
+.danmaku-item:nth-child(5n+4) {
+  background: rgba(61,50,38,0.82);
+  color: #F5EDE0;
+}
+
+.danmaku-item:nth-child(5n+5) {
+  background: rgba(255,255,255,0.88);
+  color: #C4A882;
+  border: 1px solid #E8D5C4;
+}
+
+@keyframes danmaku-fly {
+  0% {
+    opacity: 0;
+    transform: translateX(100vw);
+  }
+  8% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-120%);
+  }
+}
 
 /* ============================================== */
 /*  Loading 动画                                  */

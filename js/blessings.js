@@ -1,4 +1,37 @@
-// blessings.js — 祝福留言墙
+// blessings.js — 祝福留言墙 + 弹幕
+
+var danmakuOverlay = null;
+
+function initDanmakuOverlay() {
+  if (danmakuOverlay) return;
+  danmakuOverlay = document.createElement('div');
+  danmakuOverlay.className = 'danmaku-overlay';
+  danmakuOverlay.id = 'danmaku-overlay';
+  document.body.appendChild(danmakuOverlay);
+}
+
+function spawnDanmaku(author, text) {
+  if (!danmakuOverlay) initDanmakuOverlay();
+
+  var el = document.createElement('div');
+  el.className = 'danmaku-item';
+  el.textContent = '💝 ' + escapeHtml(author) + '：' + escapeHtml(text);
+
+  // 随机垂直位置 (避开顶部和底部)
+  var top = 15 + Math.random() * 60;
+  el.style.top = top + '%';
+
+  // 随机动画时长 6-10s
+  var duration = 6 + Math.random() * 4;
+  el.style.animationDuration = duration + 's';
+
+  danmakuOverlay.appendChild(el);
+
+  // 动画结束后移除
+  setTimeout(function () {
+    if (el.parentNode) el.parentNode.removeChild(el);
+  }, duration * 1000 + 200);
+}
 
 async function initBlessings() {
   var form = document.getElementById('blessing-form');
@@ -9,7 +42,11 @@ async function initBlessings() {
 
   if (!form) return;
 
+  initDanmakuOverlay();
   await loadBlessings(listEl, countEl);
+
+  // 加载已有祝福为弹幕
+  loadDanmakuFromServer();
 
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -29,6 +66,10 @@ async function initBlessings() {
     try {
       await API.submitBlessing({ author: author, blessingText: blessingText });
       showBlessingMsg(msgEl, '💝 祝福已送出！', 'success');
+
+      // 立即发射弹幕
+      spawnDanmaku(author, blessingText);
+
       form.reset();
       await loadBlessings(listEl, countEl);
     } catch (err) {
@@ -38,6 +79,24 @@ async function initBlessings() {
 
     resetBlessingBtn(submitBtn);
   });
+}
+
+// 从服务器加载祝福并逐个弹幕展示
+async function loadDanmakuFromServer() {
+  try {
+    var blessings = await API.getBlessings();
+    if (!blessings || blessings.length === 0) return;
+
+    // 取最近10条，反转顺序（旧的先播）
+    var recent = blessings.slice(0, 10).reverse();
+    recent.forEach(function (b, i) {
+      setTimeout(function () {
+        spawnDanmaku(b.name, b.blessing);
+      }, i * 1500 + 1000); // 每条间隔1.5秒
+    });
+  } catch (err) {
+    console.warn('Danmaku load failed:', err.message);
+  }
 }
 
 function resetBlessingBtn(btn) {
