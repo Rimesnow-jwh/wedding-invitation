@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function () {
   initVisitors();
   initRSVP();
   initBlessings();
-  initExport();
   initScrollReveal();
 });
 
