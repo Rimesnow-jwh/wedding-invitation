@@ -41,35 +41,17 @@ var API = {
       });
   },
 
-  // 提交祝福
+  // 提交祝福（始终新建记录，同一人可发多条）
   submitBlessing: function (data) {
-    var fp = getFingerprint();
     return supabase
       .from('visitors')
-      .select('id')
-      .eq('visitor_fingerprint', fp)
-      .maybeSingle()
-      .then(function (res) {
-        if (res.error) throw res.error;
-        if (res.data) {
-          return supabase
-            .from('visitors')
-            .update({ blessing: data.blessingText, name: data.author })
-            .eq('id', res.data.id)
-            .select()
-            .single();
-        } else {
-          return supabase
-            .from('visitors')
-            .insert({
-              name: data.author,
-              blessing: data.blessingText,
-              visitor_fingerprint: fp
-            })
-            .select()
-            .single();
-        }
+      .insert({
+        name: data.author,
+        blessing: data.blessingText,
+        visitor_fingerprint: getFingerprint()
       })
+      .select()
+      .single()
       .then(function (res) {
         if (res.error) throw res.error;
         return res.data;
