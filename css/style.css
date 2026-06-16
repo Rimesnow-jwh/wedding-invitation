@@ -208,10 +208,6 @@ img {
   width: fit-content;
 }
 
-.gallery-track:hover {
-  animation-play-state: paused;
-}
-
 .gallery-track img {
   width: 200px;
   height: 260px;

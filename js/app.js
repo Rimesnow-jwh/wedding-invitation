@@ -5,8 +5,20 @@ document.addEventListener('DOMContentLoaded', function () {
   initVisitors();
   initRSVP();
   initBlessings();
+  initGalleryToggle();
   initScrollReveal();
 });
+
+// 相册点击暂停/继续
+function initGalleryToggle() {
+  var track = document.querySelector('.gallery-track');
+  if (!track) return;
+  var paused = false;
+  track.addEventListener('click', function () {
+    paused = !paused;
+    track.style.animationPlayState = paused ? 'paused' : 'running';
+  });
+}
 
 // 滚动渐显效果
 function initScrollReveal() {
