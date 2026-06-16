@@ -110,13 +110,27 @@ async function loadBlessings(listEl, countEl) {
     if (countEl) countEl.textContent = blessings.length;
 
     if (listEl) {
-      listEl.innerHTML = blessings.map(function (b) {
+      // 列表中只显示最近3条，其余可滚动查看
+      var displayList = blessings.slice(0, 3);
+      listEl.innerHTML = displayList.map(function (b) {
         return '<div class="blessing-item">'
           + '<div class="blessing-author">' + escapeHtml(b.name) + '</div>'
           + '<div class="blessing-text">' + escapeHtml(b.blessing) + '</div>'
           + '<span class="blessing-time">' + timeAgo(b.created_at) + '</span>'
           + '</div>';
       }).join('');
+
+      if (blessings.length > 3) {
+        listEl.innerHTML += '<p class="text-caption" style="text-align:center;padding:8px;">↑ 上滑查看全部 ' + blessings.length + ' 条祝福 ↑</p>';
+        // 复制全部祝福到滚动列表
+        listEl.innerHTML += blessings.slice(3).map(function (b) {
+          return '<div class="blessing-item">'
+            + '<div class="blessing-author">' + escapeHtml(b.name) + '</div>'
+            + '<div class="blessing-text">' + escapeHtml(b.blessing) + '</div>'
+            + '<span class="blessing-time">' + timeAgo(b.created_at) + '</span>'
+            + '</div>';
+        }).join('');
+      }
     }
   } catch (err) {
     console.warn('Blessings load failed:', err.message);

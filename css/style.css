@@ -321,6 +321,9 @@ textarea.form-input {
 /* ============================================== */
 .blessings-list {
   margin-top: 24px;
+  max-height: 280px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .blessing-item {
