@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>婚礼邀请函 · 数据管理</title>
+  <style>
+    :root {
+      --bg: #FAF7F3;
+      --surface: #F5EDE0;
+      --border: #E8D5C4;
+      --accent: #C4A882;
+      --text: #5C4A3A;
+      --danger: #c44;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); font: 400 14px/1.6 'Noto Serif SC', Georgia, serif; color: var(--text); padding: 20px; }
+    .container { max-width: 800px; margin: 0 auto; }
+    h1 { text-align: center; color: var(--accent); font-size: 20px; letter-spacing: 4px; margin-bottom: 6px; }
+    .sub { text-align: center; color: var(--text); font-size: 11px; letter-spacing: 2px; margin-bottom: 24px; opacity: 0.6; }
+
+    .lock-screen { text-align: center; padding: 60px 20px; }
+    .lock-screen input { padding: 10px 16px; border: 1px solid var(--border); border-radius: 4px; font: 400 14px 'Noto Serif SC', serif; width: 200px; text-align: center; outline: none; }
+    .lock-screen input:focus { border-color: var(--accent); }
+    .lock-screen button { padding: 10px 24px; background: var(--accent); color: #fff; border: none; border-radius: 4px; cursor: pointer; font: 500 13px 'Noto Serif SC', serif; letter-spacing: 2px; margin-left: 8px; }
+
+    .hidden { display: none !important; }
+
+    .stats { display: flex; gap: 20px; justify-content: center; margin-bottom: 24px; flex-wrap: wrap; }
+    .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 24px; text-align: center; min-width: 100px; }
+    .stat-num { font: 700 28px/1 'Noto Serif SC', serif; color: var(--accent); }
+    .stat-label { font-size: 11px; color: var(--text); opacity: 0.7; margin-top: 4px; }
+
+    .actions { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .actions button { padding: 8px 16px; border: 1px solid var(--border); border-radius: 4px; background: #fff; cursor: pointer; font: 400 12px 'Noto Serif SC', serif; color: var(--text); letter-spacing: 1px; }
+    .actions button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .actions button.danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 8px rgba(0,0,0,0.04); }
+    th { background: var(--text); color: #fff; padding: 10px 12px; text-align: left; font: 500 11px 'Noto Serif SC', serif; letter-spacing: 1px; }
+    td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 12px; vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    .blessing-cell { max-width: 250px; word-break: break-all; }
+    .del-btn { background: none; border: 1px solid var(--danger); color: var(--danger); border-radius: 3px; padding: 2px 8px; cursor: pointer; font-size: 11px; }
+    .del-btn:hover { background: var(--danger); color: #fff; }
+    .time-cell { font-size: 10px; color: #c4b5a5; white-space: nowrap; }
+
+    .loading { text-align: center; padding: 40px; color: var(--accent); }
+    .error { color: var(--danger); font-size: 12px; text-align: center; }
+    .empty { text-align: center; padding: 40px; color: var(--text); opacity: 0.5; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🏮 婚礼数据管理</h1>
+    <p class="sub">蒋武华 & 彭斯</p>
+
+    <!-- 锁屏 -->
+    <div class="lock-screen" id="lockScreen">
+      <p style="margin-bottom:12px;color:var(--text);opacity:0.7;">请输入管理密码</p>
+      <input type="password" id="pwdInput" placeholder="输入密码" autofocus>
+      <button onclick="unlock()">进 入</button>
+      <p id="lockMsg" style="color:var(--danger);font-size:12px;margin-top:8px;display:none;">密码错误</p>
+    </div>
+
+    <!-- 管理面板 -->
+    <div id="panel" class="hidden">
+      <div class="stats" id="stats"></div>
+      <div class="actions">
+        <button id="btn-all" class="active" onclick="filterData('all')">全部记录</button>
+        <button id="btn-blessings" onclick="filterData('blessings')">祝福留言</button>
+        <button id="btn-rsvp" onclick="filterData('rsvp')">赴宴回执</button>
+        <button id="btn-refresh" onclick="refresh()">🔄 刷新</button>
+        <button id="btn-logout" class="danger" onclick="logout()">退出</button>
+      </div>
+      <div id="tableContainer"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    var ADMIN_PASSWORD = '20260718';
+    var SUPABASE_URL = 'https://rtcfxigodgxuiwvgcqkk.supabase.co';
+    var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0Y2Z4aWdvZGd4dWl3dmdjcWtrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NTQxNDQsImV4cCI6MjA5NzEzMDE0NH0.ELd8JJBmd0ld8SAnQU8sQiP0bIjYrBqrQmhhpxAeVU0';
+
+    var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    var allData = [];
+    var currentFilter = 'all';
+
+    function unlock() {
+      var pwd = document.getElementById('pwdInput').value;
+      if (pwd === ADMIN_PASSWORD) {
+        document.getElementById('lockScreen').classList.add('hidden');
+        document.getElementById('panel').classList.remove('hidden');
+        loadData();
+      } else {
+        document.getElementById('lockMsg').style.display = 'block';
+      }
+    }
+
+    document.getElementById('pwdInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') unlock();
+    });
+
+    async function loadData() {
+      document.getElementById('tableContainer').innerHTML = '<div class="loading">加载中...</div>';
+      try {
+        var res = await supabase
+          .from('visitors')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(200);
+
+        if (res.error) throw res.error;
+        allData = res.data || [];
+        renderStats();
+        renderTable(allData);
+      } catch (err) {
+        document.getElementById('tableContainer').innerHTML = '<div class="error">加载失败: ' + err.message + '</div>';
+      }
+    }
+
+    function renderStats() {
+      var blessings = allData.filter(function(r) { return r.blessing && r.blessing.trim(); });
+      var attending = allData.filter(function(r) { return r.attending === true; });
+      var totalGuests = attending.reduce(function(s, r) { return s + (r.guest_count || 0); }, 0);
+
+      document.getElementById('stats').innerHTML =
+        '<div class="stat"><div class="stat-num">' + allData.length + '</div><div class="stat-label">总记录</div></div>' +
+        '<div class="stat"><div class="stat-num">' + blessings.length + '</div><div class="stat-label">祝福留言</div></div>' +
+        '<div class="stat"><div class="stat-num">' + attending.length + '</div><div class="stat-label">确认赴宴</div></div>' +
+        '<div class="stat"><div class="stat-num">' + totalGuests + '</div><div class="stat-label">赴宴总人数</div></div>';
+    }
+
+    function renderTable(data) {
+      if (data.length === 0) {
+        document.getElementById('tableContainer').innerHTML = '<div class="empty">暂无数据</div>';
+        return;
+      }
+
+      var html = '<table><thead><tr>' +
+        '<th>时间</th><th>姓名</th><th>祝福/备注</th><th>赴宴</th><th>人数</th><th>电话</th><th>操作</th>' +
+        '</tr></thead><tbody>';
+
+      data.forEach(function(r) {
+        var time = new Date(r.created_at).toLocaleString('zh-CN', { month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' });
+        html += '<tr>' +
+          '<td class="time-cell">' + time + '</td>' +
+          '<td>' + escapeHtml(r.name || '-') + '</td>' +
+          '<td class="blessing-cell">' + (r.blessing ? escapeHtml(r.blessing) : '<span style="color:#c4b5a5;">-</span>') + '</td>' +
+          '<td>' + (r.attending === true ? '✅ 参加' : r.attending === false ? '❌ 不来' : '-') + '</td>' +
+          '<td>' + (r.guest_count || '-') + '</td>' +
+          '<td>' + (r.phone ? escapeHtml(r.phone) : '-') + '</td>' +
+          '<td><button class="del-btn" onclick="delRow(\'' + r.id + '\')">删除</button></td>' +
+          '</tr>';
+      });
+
+      html += '</tbody></table>';
+      document.getElementById('tableContainer').innerHTML = html;
+    }
+
+    function filterData(type) {
+      currentFilter = type;
+      document.querySelectorAll('.actions button[id^="btn-"]').forEach(function(b) { b.className = ''; });
+      document.getElementById('btn-' + type).className = 'active';
+
+      var filtered;
+      if (type === 'blessings') {
+        filtered = allData.filter(function(r) { return r.blessing && r.blessing.trim(); });
+      } else if (type === 'rsvp') {
+        filtered = allData.filter(function(r) { return r.attending !== null; });
+      } else {
+        filtered = allData;
+      }
+      renderTable(filtered);
+    }
+
+    async function delRow(id) {
+      if (!confirm('确定删除这条记录吗？此操作不可恢复。')) return;
+      try {
+        var res = await supabase.from('visitors').delete().eq('id', id);
+        if (res.error) throw res.error;
+        allData = allData.filter(function(r) { return r.id !== id; });
+        renderStats();
+        filterData(currentFilter);
+      } catch (err) {
+        alert('删除失败: ' + err.message);
+      }
+    }
+
+    function refresh() {
+      loadData();
+    }
+
+    function logout() {
+      document.getElementById('lockScreen').classList.remove('hidden');
+      document.getElementById('panel').classList.add('hidden');
+      document.getElementById('pwdInput').value = '';
+      allData = [];
+    }
+
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
